@@ -30,12 +30,12 @@ public class CsvImportService {
       CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withDelimiter(';').withFirstRecordAsHeader());
       List<ProfessionSkillCost> skillCosts = new ArrayList<>();
       for (CSVRecord record : csvParser) {
-        String skill = record.get("Skill");
+        String category = record.get("Category");
         String stats = record.get("Stats");
         for (String header : record.toMap().keySet()) {
-          if (!header.equals("Skill") && !header.equals("Stats")) {
+          if (!header.equals("Category") && !header.equals("Stats")) {
             String cost = record.get(header);
-            ProfessionSkillCost skillCost = new ProfessionSkillCost(skill, stats, header, cost);
+            ProfessionSkillCost skillCost = new ProfessionSkillCost(category, "Skill Name", stats, header, cost);
             skillCosts.add(skillCost);
           }
         }

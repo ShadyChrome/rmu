@@ -14,7 +14,10 @@ public class ProfessionSkillCost {
   private Long id;
 
   @Column(nullable = false)
-  private String skill;
+  private String category;
+
+  @Column(nullable = false)
+  private String skillName;
 
   @Column(nullable = false)
   private String stats;
@@ -27,10 +30,12 @@ public class ProfessionSkillCost {
 
   // Constructors, getters, and setters
 
-  public ProfessionSkillCost() {}
+  public ProfessionSkillCost() {
+  }
 
-  public ProfessionSkillCost(String skill, String stats, String profession, String cost) {
-    this.skill = skill;
+  public ProfessionSkillCost(String category, String skillName, String stats, String profession, String cost) {
+    this.category = category;
+    this.skillName = skillName;
     this.stats = stats;
     this.profession = profession;
     this.cost = cost;
@@ -44,12 +49,20 @@ public class ProfessionSkillCost {
     this.id = id;
   }
 
-  public String getSkill() {
-    return skill;
+  public String getCategory() {
+    return category;
   }
 
-  public void setSkill(String skill) {
-    this.skill = skill;
+  public void setCategory(String category) {
+    this.category = category;
+  }
+
+  public String getSkillName() {
+    return skillName;
+  }
+
+  public void setSkillName(String skillName) {
+    this.skillName = skillName;
   }
 
   public String getStats() {
