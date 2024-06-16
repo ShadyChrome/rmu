@@ -1,7 +1,9 @@
 import axios from "axios";
 
 export const rmuCharacterCreatorApi = {
-    getSkillCost
+    getSkillCost,
+    getAllCharacters,
+    saveCharacter
 }
 
 const instance = axios.create({
@@ -10,4 +12,12 @@ const instance = axios.create({
 
 function getSkillCost(profession) {
     return instance.get(`/api/skill-costs/${profession}`)
+}
+
+function getAllCharacters() {
+    return instance.get(`/api/characters/all`)
+}
+
+function saveCharacter(character) {
+    return instance.post(`/api/characters/`, character)
 }

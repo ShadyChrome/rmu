@@ -1,9 +1,9 @@
-// src/components/wizard/Wizard.jsx
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Step1 from './Step1';
 import Step2 from './Step2';
 import Step3 from './Step3';
-// Import other steps as needed
+import {rmuCharacterCreatorApi} from "../../requests/RmuCharacterCreatorApi";
+import {stats} from "../../common/Constants.js";
 
 const Wizard = () => {
     const [currentStep, setCurrentStep] = useState(1);
@@ -23,36 +23,37 @@ const Wizard = () => {
         culture: '',
         profession: '',
         realm: '',
-        level: '',
-        currentEP: '',
-        epNextLevel: '',
-        strengthTemp: '',
-        strengthPot: '',
+        level: '1',
+        currentEP: '0',
+        epNextLevel: '10000',
         agilityTemp: '',
         agilityPot: '',
         constitutionTemp: '',
         constitutionPot: '',
-        intelligenceTemp: '',
-        intelligencePot: '',
-        reasoningTemp: '',
-        reasoningPot: '',
-        selfDisciplineTemp: '',
-        selfDisciplinePot: '',
         empathyTemp: '',
         empathyPot: '',
         intuitionTemp: '',
         intuitionPot: '',
-        presenceTemp: '',
-        presencePot: '',
         memoryTemp: '',
         memoryPot: '',
+        presenceTemp: '',
+        presencePot: '',
+        quicknessTemp: '',
+        quicknessPot: '',
+        reasoningTemp: '',
+        reasoningPot: '',
+        selfDisciplineTemp: '',
+        selfDisciplinePot: '',
+        strengthTemp: '',
+        strengthPot: '',
+        skills: {} // Added field for skill learning data
     });
 
     const nextStep = () => setCurrentStep((prev) => prev + 1);
     const prevStep = () => setCurrentStep((prev) => prev - 1);
 
     const handleInputChange = (input) => (e) => {
-        setFormData({ ...formData, [input]: e.target.value });
+        setFormData({...formData, [input]: e.target.value});
     };
 
     const rollStats = () => {
@@ -73,62 +74,63 @@ const Wizard = () => {
         };
 
         setFormData((prevFormData) => {
-            const newStats = {
-                strength: generateStat(),
-                agility: generateStat(),
-                constitution: generateStat(),
-                intelligence: generateStat(),
-                reasoning: generateStat(),
-                selfDiscipline: generateStat(),
-                empathy: generateStat(),
-                intuition: generateStat(),
-                presence: generateStat(),
-                memory: generateStat(),
-            };
+            const newStats = {};
+            stats.forEach(stat => {
+                const {temp, pot} = generateStat();
+                newStats[`${stat}Temp`] = temp;
+                newStats[`${stat}Pot`] = pot;
+            });
 
             return {
                 ...prevFormData,
-                strengthTemp: newStats.strength.temp,
-                strengthPot: newStats.strength.pot,
-                agilityTemp: newStats.agility.temp,
-                agilityPot: newStats.agility.pot,
-                constitutionTemp: newStats.constitution.temp,
-                constitutionPot: newStats.constitution.pot,
-                intelligenceTemp: newStats.intelligence.temp,
-                intelligencePot: newStats.intelligence.pot,
-                reasoningTemp: newStats.reasoning.temp,
-                reasoningPot: newStats.reasoning.pot,
-                selfDisciplineTemp: newStats.selfDiscipline.temp,
-                selfDisciplinePot: newStats.selfDiscipline.pot,
-                empathyTemp: newStats.empathy.temp,
-                empathyPot: newStats.empathy.pot,
-                intuitionTemp: newStats.intuition.temp,
-                intuitionPot: newStats.intuition.pot,
-                presenceTemp: newStats.presence.temp,
-                presencePot: newStats.presence.pot,
-                memoryTemp: newStats.memory.temp,
-                memoryPot: newStats.memory.pot,
+                ...newStats,
             };
         });
+    };
+
+    const handleSkillsChange = (skills) => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            skills
+        }));
+    };
+
+    const saveCharacter = async () => {
+        try {
+            await rmuCharacterCreatorApi.saveCharacter(formData);
+            alert('Character saved successfully!');
+        } catch (error) {
+            console.error('Error saving character', error);
+            alert('Failed to save character.');
+        }
+    };
+
+    const handleNextStep = () => {
+        if (currentStep === 3) {
+            saveCharacter();
+        }
+        nextStep();
     };
 
     const stepContent = () => {
         switch (currentStep) {
             case 1:
-                return <Step1 formData={formData} handleInputChange={handleInputChange} nextStep={nextStep} />;
+                return <Step1 formData={formData} handleInputChange={handleInputChange} nextStep={handleNextStep}
+                              setFormData={setFormData}/>;
             case 2:
-                return <Step2 formData={formData} handleInputChange={handleInputChange} nextStep={nextStep} prevStep={prevStep} rollStats={rollStats} />;
+                return <Step2 formData={formData} handleInputChange={handleInputChange} nextStep={handleNextStep}
+                              prevStep={prevStep} rollStats={rollStats}/>;
             case 3:
-                return <Step3 formData={formData} handleInputChange={handleInputChange} nextStep={nextStep} prevStep={prevStep} />;
-            // Add cases for additional steps
+                return <Step3 formData={formData} handleInputChange={handleInputChange} nextStep={handleNextStep}
+                              prevStep={prevStep} handleSkillsChange={handleSkillsChange}/>;
             default:
-                return <Step1 formData={formData} handleInputChange={handleInputChange} nextStep={nextStep} />;
+                return <Step1 formData={formData} handleInputChange={handleInputChange} nextStep={handleNextStep}
+                              setFormData={setFormData}/>;
         }
     };
 
     return (
         <div>
-            <h1>Character Creation Wizard</h1>
             {stepContent()}
         </div>
     );

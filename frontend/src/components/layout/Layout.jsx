@@ -1,23 +1,49 @@
 import React from 'react';
-import {AppBar, Container, Link, Toolbar, Typography} from '@mui/material';
-import {Link as RouterLink} from 'react-router-dom';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import {Link} from 'react-router-dom';
+import {styled} from '@mui/system';
+
+const Offset = styled('div')`
+  height: 64px; // Adjust based on your AppBar's height (default is 64px)
+`;
+
+const LinkButton = styled(Button)`
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+`;
 
 const Layout = ({children}) => {
     return (
         <>
-            <AppBar position="static">
+            <AppBar position="fixed">
                 <Toolbar>
-                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                    <IconButton edge="start" color="inherit" aria-label="menu">
+                        <MenuIcon/>
+                    </IconButton>
+                    <Typography variant="h6" sx={{flexGrow: 1}}>
                         RMU Character Creator
                     </Typography>
-                    <Link component={RouterLink} to="/" color="inherit" underline="none">
-                        Character Creator
-                    </Link>
+                    <LinkButton component={Link} to="/create">
+                        New...
+                    </LinkButton>
+                    <LinkButton component={Link} to="/characters">
+                        Characters
+                    </LinkButton>
                 </Toolbar>
             </AppBar>
-            <Container>
+            <Offset/>
+            <div>
                 {children}
-            </Container>
+            </div>
         </>
     );
 };

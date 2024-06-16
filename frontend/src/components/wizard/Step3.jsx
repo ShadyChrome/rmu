@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Box,
     Button,
@@ -12,15 +12,13 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import { rmuCharacterCreatorApi } from "../../requests/RmuCharacterCreatorApi.js";
+import {rmuCharacterCreatorApi} from "../../requests/RmuCharacterCreatorApi";
 
-const Step3 = ({ formData, prevStep, nextStep }) => {
+const Step3 = ({formData, prevStep, nextStep, handleSkillsChange}) => {
     const [skillCosts, setSkillCosts] = useState([]);
-    const [skillLearning, setSkillLearning] = useState({});
+    const [skillLearning, setSkillLearning] = useState(formData.skills || {});
     const [totalCost, setTotalCost] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
-
-    const maxDP = 60;
 
     useEffect(() => {
         const fetchSkillCosts = async () => {
@@ -37,56 +35,54 @@ const Step3 = ({ formData, prevStep, nextStep }) => {
         }
     }, [formData.profession]);
 
+    useEffect(() => {
+        handleSkillsChange(skillLearning);
+    }, [skillLearning, handleSkillsChange]);
+
+    const calculateTotalCost = (newSkillLearning) => {
+        return Object.entries(newSkillLearning).reduce((total, [skill, times]) => {
+            const skillCost = skillCosts.find(s => s.skill === skill)?.cost || '0';
+            const [costX, costY] = skillCost.split('/').map(Number);
+            return total + (times === 1 ? costX : (costX + (costY || 0)));
+        }, 0);
+    };
+
     const handleInputChange = (skill, value) => {
         if (value > 2) value = 2;
         if (value < 0) value = 0;
 
-        const newSkillLearning = { ...skillLearning, [skill]: value };
+        const newSkillLearning = {...skillLearning, [skill]: value};
         setSkillLearning(newSkillLearning);
 
-        const newTotalCost = Object.entries(newSkillLearning).reduce((total, [skill, times]) => {
-            const skillCost = skillCosts.find(s => s.skill === skill)?.cost || "0";
-            let cost = 0;
-
-            if (times === 1) {
-                cost = parseInt(skillCost.split('/')[0]);
-            } else if (times === 2) {
-                const [firstCost, secondCost] = skillCost.split('/').map(Number);
-                cost = firstCost + (secondCost || firstCost);
-            }
-
-            return total + cost;
-        }, 0);
+        const newTotalCost = calculateTotalCost(newSkillLearning);
 
         setTotalCost(newTotalCost);
 
-        if (newTotalCost > maxDP) {
+        if (newTotalCost > 60) {
             setErrorMessage('Total cost cannot exceed 60.');
         } else {
             setErrorMessage('');
         }
     };
 
-    const remainingDP = maxDP - totalCost;
-
     return (
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{mt: 4}}>
             <Typography variant="h4" gutterBottom>
                 Step 3: Select Skills
-            </Typography>
-            <Typography variant="h6">
-                Available DP: {maxDP}
-            </Typography>
-            <Typography variant="h6" color={remainingDP < 0 ? "error" : "textPrimary"}>
-                Remaining DP: {remainingDP}
             </Typography>
             {errorMessage && (
                 <Typography variant="body1" color="error">
                     {errorMessage}
                 </Typography>
             )}
-            <TableContainer component={Paper}>
-                <Table>
+            <Typography variant="h6">
+                Available DP: 60
+            </Typography>
+            <Typography variant="h6">
+                Remaining DP: {60 - totalCost}
+            </Typography>
+            <TableContainer component={Paper} sx={{maxWidth: '600px', margin: 'auto'}}>
+                <Table size="small">
                     <TableHead>
                         <TableRow>
                             <TableCell>Skill</TableCell>
@@ -102,9 +98,15 @@ const Step3 = ({ formData, prevStep, nextStep }) => {
                                 <TableCell>
                                     <TextField
                                         type="number"
-                                        inputProps={{ min: 0, max: 2 }}
+                                        inputProps={{
+                                            min: 0,
+                                            max: 2,
+                                            style: {padding: '5px', margin: '0', width: '40px'}
+                                        }}
                                         value={skillLearning[skillCost.skill] || 0}
                                         onChange={(e) => handleInputChange(skillCost.skill, parseInt(e.target.value))}
+                                        size="small"
+                                        sx={{width: '50px'}}
                                     />
                                 </TableCell>
                             </TableRow>
@@ -112,11 +114,11 @@ const Step3 = ({ formData, prevStep, nextStep }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Box sx={{ mt: 2 }}>
-                <Button variant="contained" onClick={prevStep} sx={{ mr: 2 }}>
+            <Box sx={{mt: 2}}>
+                <Button variant="contained" onClick={prevStep} sx={{mr: 2}}>
                     Back
                 </Button>
-                <Button variant="contained" color="primary" onClick={nextStep} disabled={remainingDP < 0}>
+                <Button variant="contained" color="primary" onClick={nextStep} disabled={totalCost > 60}>
                     Next
                 </Button>
             </Box>

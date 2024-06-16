@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Button, Typography, Box, Grid } from '@mui/material';
+import React, {useState} from 'react';
+import {Box, Button, Grid, Typography} from '@mui/material';
 import BoostSection from './step2/BoostSection';
 import StatTable from './step2/StatTable';
 import SwapSection from './step2/SwapSection';
 
-const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) => {
+const Step2 = ({formData, handleInputChange, nextStep, prevStep, rollStats}) => {
     const [boostsRemaining, setBoostsRemaining] = useState(2);
     const [swapsRemaining, setSwapsRemaining] = useState(2);
     const [swap1, setSwap1] = useState('');
@@ -14,7 +14,7 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
     const [swappedCells, setSwappedCells] = useState({});
     const [boostHistory, setBoostHistory] = useState([]);
     const [swapHistory, setSwapHistory] = useState([]);
-    const [feedbackMessage, setFeedbackMessage] = useState('');
+    const [feedbackMessages, setFeedbackMessages] = useState([]);
 
     const applyBoost = (boost) => {
         if (boostsRemaining > 0) {
@@ -25,7 +25,7 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
                 case 'boost56':
                     statToBoost = prompt("Enter the stat to boost (e.g., strength):");
                     if (statToBoost && formData[`${statToBoost}Temp`] !== undefined) {
-                        prevValues = { temp: formData[`${statToBoost}Temp`], pot: formData[`${statToBoost}Pot`] };
+                        prevValues = {temp: formData[`${statToBoost}Temp`], pot: formData[`${statToBoost}Pot`]};
                         formData[`${statToBoost}Temp`] = 56;
                         formData[`${statToBoost}Pot`] = 78;
                         newTemp = 56;
@@ -35,7 +35,10 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
                 case 'boost90':
                     const highestTempStat = Object.keys(formData).filter(key => key.endsWith('Temp')).reduce((a, b) => formData[a] > formData[b] ? a : b);
                     statToBoost = highestTempStat.replace('Temp', '');
-                    prevValues = { temp: formData[highestTempStat], pot: formData[`${highestTempStat.replace('Temp', 'Pot')}`] };
+                    prevValues = {
+                        temp: formData[highestTempStat],
+                        pot: formData[`${highestTempStat.replace('Temp', 'Pot')}`]
+                    };
                     formData[highestTempStat] = 90;
                     formData[`${highestTempStat.replace('Temp', 'Pot')}`] = Math.min(100, formData[`${highestTempStat.replace('Temp', 'Pot')}`] + 10);
                     newTemp = 90;
@@ -45,7 +48,10 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
                     const sortedTempStats = Object.keys(formData).filter(key => key.endsWith('Temp')).sort((a, b) => formData[b] - formData[a]);
                     const secondHighestTempStat = sortedTempStats[1];
                     statToBoost = secondHighestTempStat.replace('Temp', '');
-                    prevValues = { temp: formData[secondHighestTempStat], pot: formData[`${secondHighestTempStat.replace('Temp', 'Pot')}`] };
+                    prevValues = {
+                        temp: formData[secondHighestTempStat],
+                        pot: formData[`${secondHighestTempStat.replace('Temp', 'Pot')}`]
+                    };
                     formData[secondHighestTempStat] = 85;
                     formData[`${secondHighestTempStat.replace('Temp', 'Pot')}`] = Math.min(100, formData[`${secondHighestTempStat.replace('Temp', 'Pot')}`] + 10);
                     newTemp = 85;
@@ -56,7 +62,7 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
                     const stat2 = prompt("Enter the second stat to gain roll (e.g., agility):");
                     formData[`${stat1}Pot`] = Math.min(100, formData[`${stat1}Pot`] + rollD100());
                     formData[`${stat2}Pot`] = Math.min(100, formData[`${stat2}Pot`] + rollD100());
-                    setFeedbackMessage(`Applied gain rolls: ${stat1.charAt(0).toUpperCase() + stat1.slice(1)} and ${stat2.charAt(0).toUpperCase() + stat2.slice(1)}.`);
+                    setFeedbackMessages(prevMessages => [...prevMessages, `Applied gain rolls: ${stat1.charAt(0).toUpperCase() + stat1.slice(1)} and ${stat2.charAt(0).toUpperCase() + stat2.slice(1)}.`]);
                     break;
                 default:
                     break;
@@ -67,8 +73,8 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
                     ...prevState,
                     [statToBoost]: boostsRemaining === 2 ? 'lightblue' : 'lightgreen',
                 }));
-                setBoostHistory(prevHistory => [...prevHistory, { stat: statToBoost, prevValues }]);
-                setFeedbackMessage(`Boosted ${statToBoost.charAt(0).toUpperCase() + statToBoost.slice(1)} to Temp: ${newTemp}, Pot: ${newPot}.`);
+                setBoostHistory(prevHistory => [...prevHistory, {stat: statToBoost, prevValues}]);
+                setFeedbackMessages(prevMessages => [...prevMessages, `Boosted ${statToBoost.charAt(0).toUpperCase() + statToBoost.slice(1)} to Temp: ${newTemp}, Pot: ${newPot}.`]);
             }
 
             setBoostsRemaining(boostsRemaining - 1);
@@ -81,13 +87,13 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
             formData[`${lastBoost.stat}Temp`] = lastBoost.prevValues.temp;
             formData[`${lastBoost.stat}Pot`] = lastBoost.prevValues.pot;
             setBoostedCells(prevState => {
-                const newState = { ...prevState };
+                const newState = {...prevState};
                 delete newState[lastBoost.stat];
                 return newState;
             });
             setBoostHistory(boostHistory);
             setBoostsRemaining(boostsRemaining + 1);
-            setFeedbackMessage(`Reverted boost on ${lastBoost.stat.charAt(0).toUpperCase() + lastBoost.stat.slice(1)}.`);
+            setFeedbackMessages(prevMessages => [...prevMessages, `Reverted boost on ${lastBoost.stat.charAt(0).toUpperCase() + lastBoost.stat.slice(1)}.`]);
         }
     };
 
@@ -100,8 +106,8 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
             const swapData = {
                 stat1: swap1,
                 stat2: swap2,
-                stat1Values: { temp: formData[`${swap1}Temp`], pot: formData[`${swap1}Pot`] },
-                stat2Values: { temp: formData[`${swap2}Temp`], pot: formData[`${swap2}Pot`] }
+                stat1Values: {temp: formData[`${swap1}Temp`], pot: formData[`${swap1}Pot`]},
+                stat2Values: {temp: formData[`${swap2}Temp`], pot: formData[`${swap2}Pot`]}
             };
             formData[`${swap1}Temp`] = formData[`${swap2}Temp`];
             formData[`${swap1}Pot`] = formData[`${swap2}Pot`];
@@ -116,7 +122,7 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
             setSwap1('');
             setSwap2('');
             setSwapsRemaining(swapsRemaining - 1);
-            setFeedbackMessage(`Swapped ${swap1.charAt(0).toUpperCase() + swap1.slice(1)} and ${swap2.charAt(0).toUpperCase() + swap2.slice(1)}.`);
+            setFeedbackMessages(prevMessages => [...prevMessages, `Swapped ${swap1.charAt(0).toUpperCase() + swap1.slice(1)} and ${swap2.charAt(0).toUpperCase() + swap2.slice(1)}.`]);
         }
     };
 
@@ -128,14 +134,14 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
             formData[`${lastSwap.stat2}Temp`] = lastSwap.stat2Values.temp;
             formData[`${lastSwap.stat2}Pot`] = lastSwap.stat2Values.pot;
             setSwappedCells(prevState => {
-                const newState = { ...prevState };
+                const newState = {...prevState};
                 delete newState[lastSwap.stat1];
                 delete newState[lastSwap.stat2];
                 return newState;
             });
             setSwapHistory(swapHistory);
             setSwapsRemaining(swapsRemaining + 1);
-            setFeedbackMessage(`Reverted swap between ${lastSwap.stat1.charAt(0).toUpperCase() + lastSwap.stat1.slice(1)} and ${lastSwap.stat2.charAt(0).toUpperCase() + lastSwap.stat2.slice(1)}.`);
+            setFeedbackMessages(prevMessages => [...prevMessages, `Reverted swap between ${lastSwap.stat1.charAt(0).toUpperCase() + lastSwap.stat1.slice(1)} and ${lastSwap.stat2.charAt(0).toUpperCase() + lastSwap.stat2.slice(1)}.`]);
         }
     };
 
@@ -150,23 +156,23 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
     const handleRollStats = () => {
         rollStats();
         setRollsDone(true);
-        setFeedbackMessage('Rolled stats for all attributes.');
+        setFeedbackMessages(prevMessages => [...prevMessages, 'Rolled stats for all attributes.']);
     };
 
     return (
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{mt: 4}}>
             <Typography variant="h4" gutterBottom>
                 Step 2: Generate and Assign Stats
             </Typography>
             <Button variant="contained" color="secondary" onClick={handleRollStats} disabled={rollsDone}>
                 Roll Dice for Stats
             </Button>
-            <Grid container spacing={2} sx={{ mt: 2 }}>
+            <Grid container spacing={2} sx={{mt: 2}}>
                 <Grid item xs={8}>
-                    <StatTable formData={formData} boostedCells={boostedCells} swappedCells={swappedCells} />
+                    <StatTable formData={formData} boostedCells={boostedCells} swappedCells={swappedCells}/>
                 </Grid>
                 <Grid item xs={4}>
-                    <BoostSection boostsRemaining={boostsRemaining} applyBoost={applyBoost} revertBoost={revertBoost} />
+                    <BoostSection boostsRemaining={boostsRemaining} applyBoost={applyBoost} revertBoost={revertBoost}/>
                     <SwapSection
                         swapsRemaining={swapsRemaining}
                         swap1={swap1}
@@ -178,15 +184,17 @@ const Step2 = ({ formData, handleInputChange, nextStep, prevStep, rollStats }) =
                     />
                 </Grid>
             </Grid>
-            {feedbackMessage && (
-                <Box sx={{ mt: 2 }}>
+            {feedbackMessages.length > 0 && (
+                <Box sx={{mt: 2}}>
                     <Typography variant="body1" color="primary">
-                        {feedbackMessage}
+                        {feedbackMessages.map((message, index) => (
+                            <div key={index}>{message}</div>
+                        ))}
                     </Typography>
                 </Box>
             )}
-            <Box sx={{ mt: 2 }}>
-                <Button variant="contained" onClick={prevStep} sx={{ mr: 2 }}>
+            <Box sx={{mt: 2}}>
+                <Button variant="contained" onClick={prevStep} sx={{mr: 2}}>
                     Back
                 </Button>
                 <Button variant="contained" color="primary" onClick={nextStep}>
