@@ -17,6 +17,7 @@ import {rmuCharacterCreatorApi} from "../../requests/RmuCharacterCreatorApi";
 const Step3 = ({formData, prevStep, nextStep, handleSkillsChange}) => {
     const [skillCosts, setSkillCosts] = useState([]);
     const [skillLearning, setSkillLearning] = useState(formData.skills || {});
+    const [skillDescriptions, setSkillDescriptions] = useState(formData.descriptions || {});
     const [totalCost, setTotalCost] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -36,12 +37,12 @@ const Step3 = ({formData, prevStep, nextStep, handleSkillsChange}) => {
     }, [formData.profession]);
 
     useEffect(() => {
-        handleSkillsChange(skillLearning);
-    }, [skillLearning, handleSkillsChange]);
+        handleSkillsChange({skills: skillLearning, descriptions: skillDescriptions});
+    }, [skillLearning, skillDescriptions, handleSkillsChange]);
 
     const calculateTotalCost = (newSkillLearning) => {
         return Object.entries(newSkillLearning).reduce((total, [skill, times]) => {
-            const skillCost = skillCosts.find(s => s.skill === skill)?.cost || '0';
+            const skillCost = skillCosts.find(s => s.skillName === skill)?.cost || '0';
             const [costX, costY] = skillCost.split('/').map(Number);
             return total + (times === 1 ? costX : (costX + (costY || 0)));
         }, 0);
@@ -65,6 +66,11 @@ const Step3 = ({formData, prevStep, nextStep, handleSkillsChange}) => {
         }
     };
 
+    const handleDescriptionChange = (skill, value) => {
+        const newSkillDescriptions = {...skillDescriptions, [skill]: value};
+        setSkillDescriptions(newSkillDescriptions);
+    };
+
     return (
         <Box sx={{mt: 4}}>
             <Typography variant="h4" gutterBottom>
@@ -81,19 +87,22 @@ const Step3 = ({formData, prevStep, nextStep, handleSkillsChange}) => {
             <Typography variant="h6">
                 Remaining DP: {60 - totalCost}
             </Typography>
-            <TableContainer component={Paper} sx={{maxWidth: '600px', margin: 'auto'}}>
+            <TableContainer component={Paper} sx={{maxWidth: '800px', margin: 'auto'}}>
                 <Table size="small">
                     <TableHead>
                         <TableRow>
+                            <TableCell>Category</TableCell>
                             <TableCell>Skill</TableCell>
                             <TableCell>Cost</TableCell>
                             <TableCell>Learn (Times)</TableCell>
+                            <TableCell>Description</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {skillCosts.map((skillCost) => (
-                            <TableRow key={skillCost.skill}>
-                                <TableCell>{skillCost.skill}</TableCell>
+                        {skillCosts.map((skillCost, index) => (
+                            <TableRow key={`${skillCost.skillName}-${skillCost.category}-${index}`}>
+                                <TableCell>{skillCost.category}</TableCell>
+                                <TableCell>{skillCost.skillName}</TableCell>
                                 <TableCell>{skillCost.cost}</TableCell>
                                 <TableCell>
                                     <TextField
@@ -103,10 +112,17 @@ const Step3 = ({formData, prevStep, nextStep, handleSkillsChange}) => {
                                             max: 2,
                                             style: {padding: '5px', margin: '0', width: '40px'}
                                         }}
-                                        value={skillLearning[skillCost.skill] || 0}
-                                        onChange={(e) => handleInputChange(skillCost.skill, parseInt(e.target.value))}
+                                        value={skillLearning[skillCost.skillName] || 0}
+                                        onChange={(e) => handleInputChange(skillCost.skillName, parseInt(e.target.value))}
                                         size="small"
                                         sx={{width: '50px'}}
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <TextField
+                                        value={skillDescriptions[skillCost.skillName] || ''}
+                                        onChange={(e) => handleDescriptionChange(skillCost.skillName, e.target.value)}
+                                        size="small"
                                     />
                                 </TableCell>
                             </TableRow>

@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Step1 from './Step1';
 import Step2 from './Step2';
 import Step3 from './Step3';
+import ProfessionBonusesPage from './ProfessionBonusesPage';
 import {rmuCharacterCreatorApi} from "../../requests/RmuCharacterCreatorApi";
 import {stats} from "../../common/Constants.js";
 
@@ -46,7 +47,9 @@ const Wizard = () => {
         selfDisciplinePot: '',
         strengthTemp: '',
         strengthPot: '',
-        skills: {} // Added field for skill learning data
+        skills: {}, // Added field for skill learning data
+        bonuses: [], // Added field for profession bonuses
+        descriptions: {} // Added field for skill descriptions
     });
 
     const nextStep = () => setCurrentStep((prev) => prev + 1);
@@ -95,6 +98,20 @@ const Wizard = () => {
         }));
     };
 
+    const handleBonusChange = (bonuses) => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            bonuses
+        }));
+    };
+
+    const handleDescriptionChange = (descriptions) => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            descriptions
+        }));
+    };
+
     const saveCharacter = async () => {
         try {
             await rmuCharacterCreatorApi.saveCharacter(formData);
@@ -106,7 +123,7 @@ const Wizard = () => {
     };
 
     const handleNextStep = () => {
-        if (currentStep === 3) {
+        if (currentStep === 4) { // Adjust the step number according to your steps
             saveCharacter();
         }
         nextStep();
@@ -121,6 +138,9 @@ const Wizard = () => {
                 return <Step2 formData={formData} handleInputChange={handleInputChange} nextStep={handleNextStep}
                               prevStep={prevStep} rollStats={rollStats}/>;
             case 3:
+                return <ProfessionBonusesPage formData={formData} handleBonusChange={handleBonusChange}
+                                              nextStep={handleNextStep} prevStep={prevStep}/>;
+            case 4:
                 return <Step3 formData={formData} handleInputChange={handleInputChange} nextStep={handleNextStep}
                               prevStep={prevStep} handleSkillsChange={handleSkillsChange}/>;
             default:
