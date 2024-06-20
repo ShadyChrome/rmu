@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography} from '@mui/material';
 import {cultures, professions, races, realms} from '../../common/Constants';
 
-const Step1 = ({formData, handleInputChange, nextStep, setFormData}) => {
+const CharacterDetailsPage = ({formData, handleInputChange, nextStep, setFormData}) => {
     const [errors, setErrors] = useState({});
 
     const validate = () => {
@@ -258,4 +258,4 @@ const Step1 = ({formData, handleInputChange, nextStep, setFormData}) => {
     );
 };
 
-export default Step1;
+export default CharacterDetailsPage;

@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {Box, Button, Grid, Typography} from '@mui/material';
-import BoostSection from './step2/BoostSection';
-import StatTable from './step2/StatTable';
-import SwapSection from './step2/SwapSection';
+import BoostSection from './stats/BoostSection';
+import StatTable from './stats/StatTable';
+import SwapSection from './stats/SwapSection';
 
-const Step2 = ({formData, handleInputChange, nextStep, prevStep, rollStats}) => {
+const StatsPage = ({formData, handleInputChange, nextStep, prevStep, rollStats}) => {
     const [boostsRemaining, setBoostsRemaining] = useState(2);
     const [swapsRemaining, setSwapsRemaining] = useState(2);
     const [swap1, setSwap1] = useState('');
@@ -205,4 +205,4 @@ const Step2 = ({formData, handleInputChange, nextStep, prevStep, rollStats}) => 
     );
 };
 
-export default Step2;
+export default StatsPage;

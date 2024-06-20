@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import {rmuCharacterCreatorApi} from "../../requests/RmuCharacterCreatorApi";
 
-const Step3 = ({formData, prevStep, nextStep, handleSkillsChange}) => {
+const SkillsPage = ({formData, prevStep, nextStep, handleSkillsChange}) => {
     const [skillCosts, setSkillCosts] = useState([]);
     const [skillLearning, setSkillLearning] = useState(formData.skills || {});
     const [skillDescriptions, setSkillDescriptions] = useState(formData.descriptions || {});
@@ -142,4 +142,4 @@ const Step3 = ({formData, prevStep, nextStep, handleSkillsChange}) => {
     );
 };
 
-export default Step3;
+export default SkillsPage;

@@ -1,15 +1,10 @@
 import React from 'react';
-import { Box, Typography, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
+import {Box, Button, FormControl, InputLabel, MenuItem, Select, Typography} from '@mui/material';
+import {stats} from '../../../common/Constants';
 
-const SwapSection = ({ swapsRemaining, swap1, setSwap1, swap2, setSwap2, handleSwap, revertSwap }) => {
-    // Array of stat names to populate the dropdowns
-    const stats = [
-        'strength', 'agility', 'constitution', 'intelligence', 'reasoning', 'selfDiscipline',
-        'empathy', 'intuition', 'presence', 'memory'
-    ];
-
+const SwapSection = ({swapsRemaining, swap1, setSwap1, swap2, setSwap2, handleSwap, revertSwap}) => {
     return (
-        <Box sx={{ ml: 2 }}>
+        <Box sx={{ml: 2}}>
             <Typography variant="h6" gutterBottom>
                 Swaps (Remaining: {swapsRemaining})
             </Typography>
@@ -32,7 +27,7 @@ const SwapSection = ({ swapsRemaining, swap1, setSwap1, swap2, setSwap2, handleS
             <Button
                 variant="contained"
                 onClick={handleSwap}
-                sx={{ mt: 2 }}
+                sx={{mt: 2}}
                 disabled={swapsRemaining <= 0 || !swap1 || !swap2 || swap1 === swap2}
             >
                 Apply Swap
@@ -41,7 +36,7 @@ const SwapSection = ({ swapsRemaining, swap1, setSwap1, swap2, setSwap2, handleS
                 variant="contained"
                 color="error"
                 onClick={revertSwap}
-                sx={{ mt: 2 }}
+                sx={{mt: 2}}
             >
                 Revert Last Swap
             </Button>
