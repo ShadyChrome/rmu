@@ -36,10 +36,10 @@ const Characters = () => {
                         <TableRow>
                             <TableCell>ID</TableCell>
                             <TableCell>Character Name</TableCell>
-                            <TableCell>Player Name</TableCell>
-                            <TableCell>Campaign</TableCell>
+                            <TableCell>Level</TableCell>
+                            <TableCell>Culture</TableCell>
                             <TableCell>Profession</TableCell>
-                            {/* Add other relevant columns */}
+                            <TableCell>Realm</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -47,10 +47,10 @@ const Characters = () => {
                             <TableRow key={character.id}>
                                 <TableCell>{character.id}</TableCell>
                                 <TableCell>{character.characterName}</TableCell>
-                                <TableCell>{character.playerName}</TableCell>
-                                <TableCell>{character.campaign}</TableCell>
+                                <TableCell>{character.level}</TableCell>
+                                <TableCell>{character.culture}</TableCell>
                                 <TableCell>{character.profession}</TableCell>
-                                {/* Add other relevant data */}
+                                <TableCell>{character.realm}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
