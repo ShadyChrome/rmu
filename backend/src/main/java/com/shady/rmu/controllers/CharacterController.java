@@ -19,7 +19,7 @@ public class CharacterController {
   @Autowired
   private CharacterService characterService;
 
-  @PostMapping
+  @PostMapping("/save")
   public ResponseEntity<Character> saveCharacter(@RequestBody Character character) {
     Character savedCharacter = characterService.saveCharacter(character);
     return ResponseEntity.ok(savedCharacter);
