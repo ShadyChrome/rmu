@@ -19,6 +19,9 @@ public class ProfessionSkillCost {
   @Column(nullable = false)
   private String skillName;
 
+  @Column(nullable = true)
+  private String description;
+
   @Column(nullable = false)
   private String stats;
 
@@ -28,14 +31,13 @@ public class ProfessionSkillCost {
   @Column(nullable = false)
   private String cost;
 
-  // Constructors, getters, and setters
-
   public ProfessionSkillCost() {
   }
 
-  public ProfessionSkillCost(String category, String skillName, String stats, String profession, String cost) {
+  public ProfessionSkillCost(String category, String skillName, String description, String stats, String profession, String cost) {
     this.category = category;
     this.skillName = skillName;
+    this.description = description;
     this.stats = stats;
     this.profession = profession;
     this.cost = cost;
@@ -87,5 +89,13 @@ public class ProfessionSkillCost {
 
   public void setCost(String cost) {
     this.cost = cost;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 }
