@@ -46,9 +46,9 @@ const initialFormData = {
     selfDisciplinePot: '',
     strengthTemp: '',
     strengthPot: '',
-    skills: {}, // Added field for skill learning data
-    bonuses: [], // Added field for profession bonuses
-    knacks: []  // Added field for knacks
+    skills: {},
+    bonuses: [],
+    knacks: []
 };
 
 const Wizard = () => {

@@ -1,12 +1,4 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
+Komponenten Diagramm der App
 ``` mermaid
 graph TD 
     A[Hauptkomponente App] --> B[Router]
@@ -22,4 +14,17 @@ graph TD
     E --> BoostSection
     E --> StatTable
     E --> SwapSection
+```
+Sequenzdiagramm von Client-Server bei der Charaktererstellung
+
+``` mermaid
+sequenceDiagram
+    participant GUI    
+    participant Server   
+    GUI->>Server: ProfessionBonusesPage fragt Daten mit getProfessionBonuses() an 
+    Server->>GUI: Server liefert ProfessionBonus für den ausgewählten Beruf 
+    GUI->>Server: SkillsPage fragt Daten mit getSkillCost() an 
+    Server->>GUI: Server liefert ProfessionSkillCost für den ausgewählten Beruf
+    GUI->>Server: Wizard sendet nach dem letzten Schritt den neuen Charakter  
+    Server->>GUI: Server bestätigt die Speicherung oder schickt Fehlermeldung  
 ```
