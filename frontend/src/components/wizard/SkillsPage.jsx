@@ -91,7 +91,7 @@ const SkillsPage = ({formData, prevStep, nextStep, handleSkillsChange}) => {
             <Typography variant="h6">
                 Remaining DP: {60 - totalCost}
             </Typography>
-            <TableContainer component={Paper} sx={{maxWidth: '800px', margin: 'auto'}}>
+            <TableContainer component={Paper} sx={{maxWidth: '800px', margin: 'auto', maxHeight: '800px'}}>
                 <Table size="small">
                     <TableHead>
                         <TableRow>
