@@ -44,7 +44,12 @@ const SkillsPage = ({formData, prevStep, nextStep, handleSkillsChange}) => {
         return Object.entries(newSkillLearning).reduce((total, [skill, times]) => {
             const skillCost = skillCosts.find(s => s.skillName === skill)?.cost || '0';
             const [costX, costY] = skillCost.split('/').map(Number);
-            return total + (times === 1 ? costX : (costX + (costY || 0)));
+            if (times === 1) {
+                return total + costX;
+            } else if (times === 2) {
+                return total + costX + (costY || 0);
+            }
+            return total;
         }, 0);
     };
 
@@ -56,7 +61,6 @@ const SkillsPage = ({formData, prevStep, nextStep, handleSkillsChange}) => {
         setSkillLearning(newSkillLearning);
 
         const newTotalCost = calculateTotalCost(newSkillLearning);
-
         setTotalCost(newTotalCost);
 
         if (newTotalCost > 60) {
@@ -74,7 +78,7 @@ const SkillsPage = ({formData, prevStep, nextStep, handleSkillsChange}) => {
     return (
         <Box sx={{mt: 4}}>
             <Typography variant="h4" gutterBottom>
-                Step 3: Select Skills
+                Step 4: Select Skills
             </Typography>
             {errorMessage && (
                 <Typography variant="body1" color="error">

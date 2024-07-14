@@ -69,7 +69,7 @@ const ProfessionBonusesPage = ({formData, prevStep, nextStep, handleBonusChange,
     return (
         <Box sx={{mt: 4}}>
             <Typography variant="h4" gutterBottom>
-                Select Profession Bonuses and Knacks
+                Step 3: Select Profession Bonuses and Knacks
             </Typography>
             <Typography variant="body1" gutterBottom>
                 Select up to 10 bonuses and 2 knacks for your profession.
