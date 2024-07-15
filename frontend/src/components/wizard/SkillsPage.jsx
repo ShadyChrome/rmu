@@ -41,26 +41,22 @@ const SkillsPage = ({formData, prevStep, nextStep, handleSkillsChange}) => {
     }, [skillLearning, skillDescriptions, handleSkillsChange]);
 
     const calculateTotalCost = (newSkillLearning) => {
-        return Object.entries(newSkillLearning).reduce((total, [skill, times]) => {
-            const skillCost = skillCosts.find(s => s.skillName === skill)?.cost || '0';
+        return Object.entries(newSkillLearning).reduce((total, [skillKey, times]) => {
+            const [skillName, index] = skillKey.split('-');
+            const skillCost = skillCosts[parseInt(index)].cost || '0';
             const [costX, costY] = skillCost.split('/').map(Number);
-            if (times === 1) {
-                return total + costX;
-            } else if (times === 2) {
-                return total + costX + (costY || 0);
-            }
-            return total;
+            return total + (times === 1 ? costX : (costX + (costY || 0)));
         }, 0);
     };
 
-    const handleInputChange = (skill, value) => {
+    const handleInputChange = (skillKey, value) => {
         if (value > 2) value = 2;
         if (value < 0) value = 0;
 
-        const newSkillLearning = {...skillLearning, [skill]: value};
-        setSkillLearning(newSkillLearning);
-
+        const newSkillLearning = {...skillLearning, [skillKey]: value};
         const newTotalCost = calculateTotalCost(newSkillLearning);
+
+        setSkillLearning(newSkillLearning);
         setTotalCost(newTotalCost);
 
         if (newTotalCost > 60) {
@@ -70,8 +66,8 @@ const SkillsPage = ({formData, prevStep, nextStep, handleSkillsChange}) => {
         }
     };
 
-    const handleDescriptionChange = (skill, value) => {
-        const newSkillDescriptions = {...skillDescriptions, [skill]: value};
+    const handleDescriptionChange = (skillKey, value) => {
+        const newSkillDescriptions = {...skillDescriptions, [skillKey]: value};
         setSkillDescriptions(newSkillDescriptions);
     };
 
@@ -103,34 +99,37 @@ const SkillsPage = ({formData, prevStep, nextStep, handleSkillsChange}) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {skillCosts.map((skillCost, index) => (
-                            <TableRow key={`${skillCost.skillName}-${skillCost.category}-${index}`}>
-                                <TableCell>{skillCost.category}</TableCell>
-                                <TableCell>{skillCost.skillName}</TableCell>
-                                <TableCell>{skillCost.cost}</TableCell>
-                                <TableCell>
-                                    <TextField
-                                        type="number"
-                                        inputProps={{
-                                            min: 0,
-                                            max: 2,
-                                            style: {padding: '5px', margin: '0', width: '40px'}
-                                        }}
-                                        value={skillLearning[skillCost.skillName] || 0}
-                                        onChange={(e) => handleInputChange(skillCost.skillName, parseInt(e.target.value))}
-                                        size="small"
-                                        sx={{width: '50px'}}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        value={skillDescriptions[skillCost.skillName] || ''}
-                                        onChange={(e) => handleDescriptionChange(skillCost.skillName, e.target.value)}
-                                        size="small"
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {skillCosts.map((skillCost, index) => {
+                            const skillKey = `${skillCost.skillName}-${index}`;
+                            return (
+                                <TableRow key={skillKey}>
+                                    <TableCell>{skillCost.category}</TableCell>
+                                    <TableCell>{skillCost.skillName}</TableCell>
+                                    <TableCell>{skillCost.cost}</TableCell>
+                                    <TableCell>
+                                        <TextField
+                                            type="number"
+                                            inputProps={{
+                                                min: 0,
+                                                max: 2,
+                                                style: {padding: '5px', margin: '0', width: '40px'}
+                                            }}
+                                            value={skillLearning[skillKey] || 0}
+                                            onChange={(e) => handleInputChange(skillKey, parseInt(e.target.value))}
+                                            size="small"
+                                            sx={{width: '50px'}}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextField
+                                            value={skillDescriptions[skillKey] || ''}
+                                            onChange={(e) => handleDescriptionChange(skillKey, e.target.value)}
+                                            size="small"
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>
